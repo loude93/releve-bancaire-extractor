@@ -4,7 +4,7 @@ const CANDIDATE_ENDPOINTS = ['/.netlify/functions/extract', '/api/extract'];
 const DATE_REGEX = /(\b\d{1,2}[\/-]\d{1,2}[\/-]\d{2,4}\b|\b\d{4}[\/-]\d{1,2}[\/-]\d{1,2}\b)/;
 
 const mapExtractionError = (rawMessage: string): string => {
-  if (rawMessage.includes('An API Key must be set when running in a browser')) {
+  if (/api\s*key/i.test(rawMessage)) {
     return 'Une ancienne version Gemini est encore chargée dans votre navigateur. Faites un hard refresh (Ctrl/Cmd+Shift+R) puis réessayez.';
   }
 
@@ -127,7 +127,7 @@ export const extractDataFromPdf = async (base64Pdf: string): Promise<ExtractionR
         continue;
       }
 
-      const errorPayload = await response.json().catch(() => ({}));
+      const errorPayload = await response.json().catch(async () => ({ error: await response.text().catch(() => '') }));
       lastError = errorPayload.error || lastError;
       break;
     } catch {
@@ -136,7 +136,7 @@ export const extractDataFromPdf = async (base64Pdf: string): Promise<ExtractionR
   }
 
   const mapped = mapExtractionError(lastError);
-  if (mapped.includes('API Key') || mapped === 'Local extraction failed') {
+  if (/api\s*key/i.test(mapped) || mapped === 'Local extraction failed') {
     return extractInBrowser(base64Pdf);
   }
 
