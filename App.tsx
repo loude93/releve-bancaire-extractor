@@ -64,8 +64,12 @@ const App: React.FC = () => {
         ));
       } catch (err: any) {
         console.error(err);
+        const rawError = err?.message || 'Processing failed';
+        const mappedError = rawError.includes('An API Key must be set when running in a browser')
+          ? 'Version obsolète détectée. Recharge la page (Ctrl/Cmd+Shift+R) puis redéploie Netlify.'
+          : rawError;
         setFileList(prev => prev.map(item => 
-          item.id === nextPending.id ? { ...item, status: FileStatus.ERROR, error: err.message || 'Processing failed' } : item
+          item.id === nextPending.id ? { ...item, status: FileStatus.ERROR, error: mappedError } : item
         ));
       } finally {
         processingRef.current = false;

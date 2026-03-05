@@ -1,6 +1,6 @@
 import { ExtractionResult } from '../types';
 
-const CANDIDATE_ENDPOINTS = ['/api/extract', '/.netlify/functions/extract'];
+const CANDIDATE_ENDPOINTS = ['/.netlify/functions/extract', '/api/extract'];
 
 const mapExtractionError = (rawMessage: string): string => {
   if (rawMessage.includes('An API Key must be set when running in a browser')) {

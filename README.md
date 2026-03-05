@@ -65,4 +65,4 @@ Le repo contient déjà `netlify.toml`, donc Netlify utilisera automatiquement :
 
 - Si vous voyez encore **"An API Key must be set when running in a browser"**, c'est une ancienne version frontend en cache.
 - Faites un **hard refresh** (`Ctrl+Shift+R` / `Cmd+Shift+R`) puis redéployez la dernière version Netlify.
-- Cette version n'utilise pas Gemini côté navigateur; elle appelle uniquement `/.netlify/functions/extract` (prod) ou `/api/extract` (dev).
+- Cette version n'utilise pas Gemini côté navigateur; elle tente d'abord `/.netlify/functions/extract`, puis `/api/extract` en secours.
