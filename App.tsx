@@ -4,7 +4,7 @@ import * as XLSX from 'xlsx';
 import JSZip from 'jszip';
 import { FileUp, FileSpreadsheet, CheckCircle2, AlertCircle, Loader2, Download, RefreshCw, ChevronRight, Files, Trash2, Clock, Building2, Calendar, Linkedin } from 'lucide-react';
 import { FileStatus, FileItem, ExtractionResult } from './types';
-import { extractDataFromPdf } from './services/geminiService';
+import { extractDataFromPdf } from './services/localExtractionService';
 
 const App: React.FC = () => {
   const [fileList, setFileList] = useState<FileItem[]>([]);
@@ -158,6 +158,10 @@ const App: React.FC = () => {
         <p className="text-lg text-slate-600 max-w-2xl mx-auto leading-relaxed">
           Conversion intelligente avec détection automatique de la <strong>société</strong> et de la <strong>date</strong>.
         </p>
+        <div className="mt-4 inline-flex items-center gap-2 rounded-full border border-emerald-200 bg-emerald-50 px-4 py-1.5 text-xs font-semibold text-emerald-700">
+          <span className="h-2 w-2 rounded-full bg-emerald-500" />
+          Mode local actif (sans API Gemini)
+        </div>
       </div>
 
       <div className="max-w-5xl w-full grid grid-cols-1 lg:grid-cols-12 gap-8">
@@ -350,7 +354,7 @@ const App: React.FC = () => {
           className="inline-flex items-center gap-1.5 text-indigo-500 hover:text-indigo-600 transition-colors font-medium"
         >
           <Linkedin className="w-4 h-4" />
-          Visite my LinkedIn page
+          Visiter ma page LinkedIn
         </a>
       </footer>
     </div>
