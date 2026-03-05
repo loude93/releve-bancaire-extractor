@@ -88,7 +88,7 @@ const extractTables = (text: string): ExtractionResult['tables'] => {
   return [{ sheetName: 'Transactions', headers, rows: dataRows }];
 };
 
-const extractInBrowser = (base64Pdf: string): ExtractionResult => {
+export const extractDataFromPdfInBrowser = (base64Pdf: string): ExtractionResult => {
   const binary = decodeBase64ToLatin1(base64Pdf);
   const tokens = binary.match(/\((?:\\.|[^\\()])*\)/g) || [];
   const text = tokens
@@ -137,7 +137,7 @@ export const extractDataFromPdf = async (base64Pdf: string): Promise<ExtractionR
 
   const mapped = mapExtractionError(lastError);
   if (/api\s*key/i.test(mapped) || mapped === 'Local extraction failed') {
-    return extractInBrowser(base64Pdf);
+    return extractDataFromPdfInBrowser(base64Pdf);
   }
 
   throw new Error(mapped);

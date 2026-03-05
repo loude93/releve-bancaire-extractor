@@ -4,7 +4,7 @@ import * as XLSX from 'xlsx';
 import JSZip from 'jszip';
 import { FileUp, FileSpreadsheet, CheckCircle2, AlertCircle, Loader2, Download, RefreshCw, ChevronRight, Files, Trash2, Clock, Building2, Calendar, Linkedin } from 'lucide-react';
 import { FileStatus, FileItem, ExtractionResult } from './types';
-import { extractDataFromPdf } from './services/localExtractionService';
+import { extractDataFromPdf, extractDataFromPdfInBrowser } from './services/localExtractionService';
 
 const App: React.FC = () => {
   const [fileList, setFileList] = useState<FileItem[]>([]);
@@ -65,11 +65,32 @@ const App: React.FC = () => {
       } catch (err: any) {
         console.error(err);
         const rawError = err?.message || 'Processing failed';
-        const mappedError = /(api\s*key|gemini)/i.test(rawError)
-          ? 'Erreur d\'ancienne version détectée. Recharge la page (Ctrl/Cmd+Shift+R) puis réessaie.'
-          : rawError;
+
+        if (/(api\s*key|gemini)/i.test(rawError)) {
+          try {
+            const reader = new FileReader();
+            const base64Promise = new Promise<string>((resolve, reject) => {
+              reader.onload = () => resolve((reader.result as string).split(',')[1]);
+              reader.onerror = reject;
+              reader.readAsDataURL(nextPending.file);
+            });
+            const base64 = await base64Promise;
+            const fallbackResult = extractDataFromPdfInBrowser(base64);
+            setFileList(prev => prev.map(item =>
+              item.id === nextPending.id ? { ...item, status: FileStatus.SUCCESS, result: fallbackResult } : item
+            ));
+            return;
+          } catch (fallbackErr: any) {
+            const fallbackMessage = fallbackErr?.message || 'Fallback local failed';
+            setFileList(prev => prev.map(item =>
+              item.id === nextPending.id ? { ...item, status: FileStatus.ERROR, error: fallbackMessage } : item
+            ));
+            return;
+          }
+        }
+
         setFileList(prev => prev.map(item => 
-          item.id === nextPending.id ? { ...item, status: FileStatus.ERROR, error: mappedError } : item
+          item.id === nextPending.id ? { ...item, status: FileStatus.ERROR, error: rawError } : item
         ));
       } finally {
         processingRef.current = false;
