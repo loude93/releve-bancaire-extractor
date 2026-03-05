@@ -1,6 +1,6 @@
 # Relevé bancaire PDF → Excel (local)
 
-Application web pour convertir des PDF en fichiers Excel, avec extraction **100% locale** (sans API Gemini).
+Application web pour convertir des PDF en fichiers Excel, avec extraction **100% locale** (sans API externe).
 
 ## Prérequis
 
@@ -25,7 +25,7 @@ Le frontend tourne sur `http://localhost:3000` et envoie les requêtes d'extract
 
 ## Notes
 
-- Aucun appel à Gemini n'est utilisé.
+- Aucun appel à une API externe n'est utilisé.
 - Extraction locale renforcée: lecture des content streams PDF (y compris FlateDecode), extraction des opérateurs de texte (`Tj`/`TJ`) puis reconstruction des tableaux par blocs de lignes.
 - Selon la qualité du PDF (scan image/non textuel), un OCR local serait nécessaire pour des résultats parfaits.
 
@@ -63,6 +63,6 @@ Le repo contient déjà `netlify.toml`, donc Netlify utilisera automatiquement :
 
 ## Dépannage
 
-- Si vous voyez encore **"An API Key must be set when running in a browser"**, c'est une ancienne version frontend en cache.
+- Si vous voyez encore une erreur d'ancienne version dans le navigateur, c'est généralement un cache frontend obsolète.
 - Faites un **hard refresh** (`Ctrl+Shift+R` / `Cmd+Shift+R`) puis redéployez la dernière version Netlify.
-- Cette version n'utilise pas Gemini côté navigateur; elle tente d'abord `/.netlify/functions/extract`, puis `/api/extract` en secours.
+- Cette version n'utilise aucune API IA côté navigateur; elle tente d'abord `/.netlify/functions/extract`, puis `/api/extract` en secours.

@@ -4,8 +4,8 @@ const CANDIDATE_ENDPOINTS = ['/.netlify/functions/extract', '/api/extract'];
 const DATE_REGEX = /(\b\d{1,2}[\/-]\d{1,2}[\/-]\d{2,4}\b|\b\d{4}[\/-]\d{1,2}[\/-]\d{1,2}\b)/;
 
 const mapExtractionError = (rawMessage: string): string => {
-  if (/api\s*key/i.test(rawMessage)) {
-    return 'Une ancienne version Gemini est encore chargée dans votre navigateur. Faites un hard refresh (Ctrl/Cmd+Shift+R) puis réessayez.';
+  if (/(api\s*key|gemini)/i.test(rawMessage)) {
+    return 'Erreur d\'ancienne version détectée. Faites un hard refresh (Ctrl/Cmd+Shift+R) puis réessayez.';
   }
 
   return rawMessage;
