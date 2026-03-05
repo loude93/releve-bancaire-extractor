@@ -7,13 +7,13 @@
     "dev": "vite",
     "build": "vite build",
     "lint": "tsc",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "server": "node backend/server.cjs"
   },
   "dependencies": {
     "react": "^19.2.3",
     "lucide-react": "^0.562.0",
     "react-dom": "^19.2.3",
-    "@google/genai": "^1.34.0",
     "xlsx": "^0.18.5",
     "jszip": "^3.10.1"
   },

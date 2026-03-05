@@ -1,5 +1,5 @@
 {
   "name": "RELEVE BANCAIRE PDF to Excel Converter",
-  "description": "A high-performance utility that uses Gemini AI to intelligently extract tables and structured data from PDF documents and convert them into downloadable Excel spreadsheets.",
+  "description": "A local-first utility that extracts structured tables from bank statement PDFs and converts them into downloadable Excel files without external AI APIs.",
   "requestFramePermissions": []
 }

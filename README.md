@@ -1,20 +1,68 @@
-<div align="center">
-<img width="1200" height="475" alt="GHBanner" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
-</div>
+# Relevé bancaire PDF → Excel (local)
 
-# Run and deploy your AI Studio app
+Application web pour convertir des PDF en fichiers Excel, avec extraction **100% locale** (sans API externe).
 
-This contains everything you need to run your app locally.
+## Prérequis
 
-View your app in AI Studio: https://ai.studio/apps/4cbad933-932b-493c-b97d-4849a6332f3e
+- Node.js 18+
 
-## Run Locally
+## Lancer en local
 
-**Prerequisites:**  Node.js
+1. Installer les dépendances :
+   ```bash
+   npm install
+   ```
+2. Démarrer le backend local :
+   ```bash
+   npm run server
+   ```
+3. Dans un autre terminal, démarrer le front :
+   ```bash
+   npm run dev
+   ```
+
+Le frontend tourne sur `http://localhost:3000` et envoie les requêtes d'extraction au backend local sur `http://localhost:8787` via le proxy Vite.
+
+## Notes
+
+- Aucun appel à une API externe n'est utilisé.
+- Extraction locale renforcée: lecture des content streams PDF (y compris FlateDecode), extraction des opérateurs de texte (`Tj`/`TJ`) puis reconstruction des tableaux par blocs de lignes.
+- Selon la qualité du PDF (scan image/non textuel), un OCR local serait nécessaire pour des résultats parfaits.
+
+## Héberger sur Netlify
+
+Cette app peut être déployée sur Netlify avec un frontend statique + fonctions serverless pour l'API locale.
+
+### 1) Connecter le dépôt
+- Ouvre Netlify → **Add new site** → **Import an existing project**.
+- Connecte ton repo GitHub/GitLab/Bitbucket.
+
+### 2) Paramètres de build
+Le repo contient déjà `netlify.toml`, donc Netlify utilisera automatiquement :
+- **Build command**: `npm run build`
+- **Publish directory**: `dist`
+- **Functions directory**: `netlify/functions`
+
+### 3) Déployer
+- Clique **Deploy site**.
+- Après déploiement, l'UI appelle toujours `/api/extract` et `/api/health`, redirigés vers les Netlify Functions.
+
+### 4) Vérifier
+- `GET https://<ton-site>.netlify.app/api/health` doit renvoyer `{ "ok": true }`.
+- Charge un PDF dans l'UI et vérifie qu'un fichier Excel est généré.
+
+## Détails techniques Netlify
+
+- `netlify/functions/extract.cjs` expose `POST /api/extract`.
+- `netlify/functions/health.cjs` expose `GET /api/health`.
+- Les règles de redirection sont définies dans `netlify.toml`.
+- Le code d'extraction est factorisé dans `backend/extractor.cjs` et partagé entre:
+  - le serveur local `backend/server.cjs`,
+  - les fonctions Netlify.
 
 
-1. Install dependencies:
-   `npm install`
-2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
-3. Run the app:
-   `npm run dev`
+## Dépannage
+
+- Si vous voyez encore une erreur d'ancienne version dans le navigateur, c'est généralement un cache frontend obsolète.
+- Faites un **hard refresh** (`Ctrl+Shift+R` / `Cmd+Shift+R`) puis redéployez la dernière version Netlify.
+- Cette version n'utilise aucune API IA côté navigateur; elle tente d'abord `/.netlify/functions/extract`, puis `/api/extract` en secours.
